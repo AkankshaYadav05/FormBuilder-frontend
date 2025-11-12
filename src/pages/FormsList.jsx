@@ -15,7 +15,7 @@ import StatsCard from '../components/StatsCard';
 import ShareModal from '../components/ShareModal';
 import DeleteModal from '../components/DeleteModal';
 
-function FormsList({user, form}) {
+function FormsList() {
   const navigate = useNavigate();
   const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,6 +25,8 @@ function FormsList({user, form}) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [profile, setProfile] = useState(null);
 
+  axios.defaults.baseURL = "https://formbuilder-backend-j8sk.onrender.com" || "http://localhost:5000";
+  axios.defaults.withCredentials = true;
 
   useEffect(() => {
     loadForms();

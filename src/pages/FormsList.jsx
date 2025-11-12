@@ -25,7 +25,7 @@ function FormsList() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [profile, setProfile] = useState(null);
 
-  axios.defaults.baseURL = "https://formbuilder-backend-j8sk.onrender.com" || "http://localhost:5000";
+  axios.defaults.baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000";
   axios.defaults.withCredentials = true;
 
   useEffect(() => {

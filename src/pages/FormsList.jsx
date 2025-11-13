@@ -47,7 +47,6 @@ function FormsList() {
   const loadForms = async () => {
     try {
       setLoading(true);
-      axios.defaults.baseURL = 'https://formbuilder-backend-j8sk.onrender.com';
       const response = await axios.get('/api/forms');
       setForms(Array.isArray(response.data) ? response.data : []);   
     } catch (error) {
@@ -61,9 +60,11 @@ function FormsList() {
 
 
   const deleteForm = async (formId) => {
+    console.log("Deleting form:", formId); 
     setIsDeleting(true);
     try {
-      await axios.delete(`/api/forms/${formId}`);
+      console.log("Base URL in delete:", axios.defaults.baseURL);
+      await axios.delete(`/api/forms/${formId}`, { withCredentials: true });
       setForms(forms.filter((form) => form._id !== formId));
       setMessage({ type: 'success', text: 'Form deleted successfully!' });
       setTimeout(() => setMessage(null), 3000);
@@ -307,6 +308,7 @@ function FormsList() {
                       </button>
 
                       <button
+                        type="button"
                         onClick={() => {
                           if (isOwner) {
                             setDeleteModal({ isOpen: true, form });

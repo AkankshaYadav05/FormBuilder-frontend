@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Users, FileText, Search, TrendingUp, CheckCircle } from "lucide-react";
-import axios from "axios";
+import api from "../utils/axios.js";
+import {BACKEND_URL} from "../utils/constants.js";
+
 import ResponseCard from "../components/ResponseCard";
 import ResponseDetailModal from "../components/ResponseDetailModal";
 import StatsCard from "../components/StatsCard";
@@ -17,24 +19,38 @@ export default function FormResponses() {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    async function fetchData() {
-      if (!id) return;
-      setLoading(true);
-      try {
-        axios.defaults.baseURL = 'https://formbuilder-backend-j8sk.onrender.com';
-        const formResponse = await axios.get(`/api/forms/${id}`);
-        setForm(formResponse.data);
-        const responsesResponse = await axios.get(`/api/responses?formId=${id}`);
-        setResponses(Array.isArray(responsesResponse.data) ? responsesResponse.data : []);
-      } catch (error) {
-        console.error("Failed to fetch data:", error.response || error.message);
-        alert(error.response?.status === 404 ? "Form or responses not found" : "Error fetching data");
-      } finally {
-        setLoading(false);
+  async function fetchData() {
+    if (!id) return;
+
+    setLoading(true);
+    try {
+      const [formRes, responsesRes] = await Promise.all([
+        api.get(`/api/forms/${id}`),
+        api.get(`/api/responses?formId=${id}`),
+      ]);
+
+      setForm(formRes.data);
+      setResponses(
+        Array.isArray(responsesRes.data) ? responsesRes.data : []
+      );
+    } catch (error) {
+      console.error("Failed to fetch data:", error.response || error.message);
+
+      if (error.response?.status === 404) {
+        alert("Form or responses not found");
+      } else if (error.response?.status === 401) {
+        alert("You are not authorized. Please login again.");
+      } else {
+        alert("Error fetching data");
       }
+    } finally {
+      setLoading(false);
     }
-    fetchData();
-  }, [id]);
+  }
+
+  fetchData();
+}, [id]);
+
 
   const handleViewResponse = (response) => {
     setSelectedResponse(response);
@@ -82,7 +98,7 @@ export default function FormResponses() {
   if (!window.confirm("Are you sure you want to delete this response?")) return;
 
   try {
-    await axios.delete(`https://formbuilder-backend-j8sk.onrender.com/api/responses/${responseId}`);
+    await api.delete(`/api/responses/${responseId}`);
     setResponses((prev) => prev.filter((r) => r._id !== responseId));
     alert("Response deleted successfully");
   } catch (error) {

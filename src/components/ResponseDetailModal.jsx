@@ -1,5 +1,6 @@
 import React from "react";
 import { X, Star } from "lucide-react";
+import {BACKEND_URL} from "../utils/constants.js";
 
 export default function ResponseDetailModal({ response, form, isOpen, onClose, responseIndex }) {
   if (!isOpen || !response) return null;
@@ -116,7 +117,7 @@ export default function ResponseDetailModal({ response, form, isOpen, onClose, r
                             answer.map((file, i) => (
                               <a
                                 key={i}
-                                href={`https://formbuilder-backend-j8sk.onrender.com${file}`}
+                                href={`${BACKEND_URL}${file}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-blue-600 hover:underline"
@@ -126,7 +127,7 @@ export default function ResponseDetailModal({ response, form, isOpen, onClose, r
                             ))
                           ) : (
                             <a
-                              href={`https://formbuilder-backend-j8sk.onrender.com${answer}`}
+                              href={`${BACKEND_URL}${answer}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-blue-600 hover:underline"

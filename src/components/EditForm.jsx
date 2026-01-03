@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import FormBuilder from "../pages/FormBuilder";
+import api from "../utils/axios.js";
+import {BACKEND_URL} from "../utils/constants.js";
 
 export default function EditForm() {
   const { id } = useParams();
@@ -9,7 +11,7 @@ export default function EditForm() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`https://formbuilder-backend-j8sk.onrender.com/api/forms/${id}`)
+    fetch(`${BACKEND_URL}/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch form");
         return res.json();
@@ -37,7 +39,7 @@ export default function EditForm() {
         initialData={formData}
         onSubmit={(updatedForm) => {
           console.log("Submitting updated form:", updatedForm);
-          fetch(`https://formbuilder-backend-j8sk.onrender.com/api/forms/${id}`, {
+          fetch(`${BACKEND_URL}/api/forms/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(updatedForm),

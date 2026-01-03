@@ -2,14 +2,14 @@ import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../components/AuthContext";
 import AuthForm from "../components/AuthForm";
-import axios from "axios";
+import api from "../utils/axios.js";
+import { BACKEND_URL } from "../utils/constants.js";
 
 import {
   MousePointer, Smartphone, Users, Shield, Brain,
   Menu, X, ChevronLeft, ChevronRight
 } from "lucide-react";
 
-axios.defaults.withCredentials = true;
 
 export function Home() {
   const navigate = useNavigate();
@@ -20,8 +20,6 @@ export function Home() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [profile, setProfile] = useState(null);
 
-  
-
   const handleAuthSuccess = (username) => {
     setAuth(username);
     setShowAuth(false);
@@ -29,7 +27,7 @@ export function Home() {
 
  const handleLogout = async () => {
     try {
-      await axios.post("https://formbuilder-backend-j8sk.onrender.com/api/users/logout");
+      await api.post("/api/users/logout");
       setAuth(null);
       setDropdownOpen(false); // close dropdown after logout
     } catch (err) {
@@ -49,7 +47,7 @@ export function Home() {
   useEffect(() => {
       const fetchProfile = async () => {
         try {
-          const res = await axios.get("/api/users/profile");
+          const res = await api.get("/api/users/profile");
           setProfile(res.data);
         } catch (err) {
           console.error("Failed to load profile", err);
@@ -121,7 +119,7 @@ export function Home() {
                     profile?.profileImage
                     ? profile.profileImage.startsWith("http")
                     ? profile.profileImage
-                    : `https://formbuilder-backend-j8sk.onrender.com${profile.profileImage}`
+                    : `${BACKEND_URL}${profile.profileImage}`
                     : "https://t3.ftcdn.net/jpg/06/19/26/46/360_F_619264680_x2PBdGLF54sFe7kTBtAvZnPyXgvaRw0Y.jpg"
                   }                  
                   alt="Profile"
@@ -207,7 +205,7 @@ export function Home() {
                     profile?.profileImage
                     ? profile.profileImage.startsWith("http")
                     ? profile.profileImage
-                    : `https://formbuilder-backend-j8sk.onrender.com${profile.profileImage}`
+                    : `${BACKEND_URL}${profile.profileImage}`
                     : "https://t3.ftcdn.net/jpg/06/19/26/46/360_F_619264680_x2PBdGLF54sFe7kTBtAvZnPyXgvaRw0Y.jpg"
                   }
                     alt="Profile"

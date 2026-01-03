@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Star, Upload, Calendar, Clock, ChevronDown, AlertCircle } from 'lucide-react';
-import axios from 'axios';
+import api from "../utils/axios.js";
+import {BACKEND_URL} from "../utils/constants.js";
 
 export function QuestionRenderer({ question, answer, hasError, onChange }) {
   const questionProps = { question, answer, onChange };
@@ -273,7 +274,7 @@ function FileUpload({ question, answer, onChange }) {
       const formData = new FormData();
       formData.append('file', file);
 
-      const res = await axios.post('https://formbuilder-backend-j8sk.onrender.com/api/upload', formData, {
+      const res = await api.post('/api/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
@@ -309,7 +310,7 @@ function FileUpload({ question, answer, onChange }) {
         />
         {answer && (
           <p className="mt-2 text-xs sm:text-sm text-green-600 break-all px-2">
-            <a href={`https://formbuilder-backend-j8sk.onrender.com/${answer}`} target="_blank" rel="noopener noreferrer">
+            <a href={`${BACKEND_URL}/${answer}`} target="_blank" rel="noopener noreferrer">
               {answer.split('/').pop()}
             </a>
           </p>

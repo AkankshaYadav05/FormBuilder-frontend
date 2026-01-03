@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { QuestionRenderer } from '../components/QuestionRenderer';
 import { LoadingScreen, SuccessScreen, FormHeader, SubmitButton } from '../components/FormScreens';
-
-axios.defaults.withCredentials = true;
+import api from "../utils/axios.js";
 
 export default function FillForm() {
   const { formId } = useParams();
@@ -18,7 +16,7 @@ export default function FillForm() {
   useEffect(() => {
     const loadForm = async () => {
       try {
-        const { data } = await axios.get(`https://formbuilder-backend-j8sk.onrender.com/api/forms/${formId}`);
+        const { data } = await api.get(`/api/forms/${formId}`);
         setForm(data);
       } catch (error) {
         console.error('Error loading form:', error);
@@ -59,7 +57,7 @@ export default function FillForm() {
         answer: answers[q.id] || '',
       }));
 
-      await axios.post(`https://formbuilder-backend-j8sk.onrender.com/api/responses/submit`, {
+      await api.post(`/api/responses/submit`, {
         formId: form._id,
         answers: answersArray,
       });

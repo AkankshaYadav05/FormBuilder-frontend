@@ -1,8 +1,9 @@
 import { useContext, useEffect, useState } from "react";
-import axios from "axios";
 import { AuthContext } from "../components/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, User, FileText, BarChart2, Edit2, Upload, Calendar, Edit3, Eye, Trash2, Share2, Plus} from "lucide-react";
+import api from "../utils/axios.js";
+import { BACKEND_URL } from "../utils/constants.js";
 
 import ShareModal from "../components/ShareModal";
 import DeleteModal from "../components/DeleteModal";
@@ -23,40 +24,47 @@ function Profile() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    if (!auth) {
-      navigate("/");
-      return;
-    }
+  if (!auth) {
+    navigate("/");
+    return;
+  }
 
-    async function fetchProfile() {
-      try {
-        axios.defaults.baseURL = "https://formbuilder-backend-j8sk.onrender.com";
-        axios.defaults.withCredentials = true;
+  async function fetchProfile() {
+    try {
+      const [userRes, formsRes, respRes] = await Promise.all([
+        api.get("/api/users/profile"),
+        api.get("/api/forms/user"),
+        api.get("/api/responses/user"),
+      ]);
 
-        const [userRes, formsRes, respRes] = await Promise.all([
-          axios.get("/api/users/profile"),
-          axios.get("/api/forms/user", { withCredentials: true }),
-          axios.get("/api/responses/user", { withCredentials: true }),
-        ]);
+      setProfile(userRes.data);
 
-        setProfile(userRes.data);
-        setStats({ forms: formsRes.data.length, responses: respRes.data.length });
-        setForms(formsRes.data);
-        setUpdatedName(userRes.data.name);
-      } catch (err) {
-        console.error("Failed to load profile", err);
-      } finally {
-        setLoading(false);
+      setStats({
+        forms: Array.isArray(formsRes.data) ? formsRes.data.length : 0,
+        responses: Array.isArray(respRes.data) ? respRes.data.length : 0,
+      });
+
+      setForms(Array.isArray(formsRes.data) ? formsRes.data : []);
+      setUpdatedName(userRes.data.username); // ✅ correct field
+    } catch (err) {
+      console.error("Failed to load profile", err);
+
+      if (err.response?.status === 401) {
+        navigate("/");
       }
+    } finally {
+      setLoading(false);
     }
+  }
 
-    fetchProfile();
-  }, [auth, navigate]);
+  fetchProfile();
+}, [auth, navigate]);
+
 
   const handleUpdateName = async () => {
     if (!updatedName.trim()) return alert("Name cannot be empty");
     try {
-      await axios.put("/api/users/profile", { name: updatedName });
+      await api.put("/api/users/profile", { name: updatedName });
       setProfile((prev) => ({ ...prev, name: updatedName }));
       setAuth(updatedName);
       setEditing(false);
@@ -75,11 +83,11 @@ function Profile() {
 
     try {
       setImageUploading(true);
-      const res = await axios.post("/api/upload", formData, {
+      const res = await api.post("/api/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       const imagePath = res.data.filePath;
-      await axios.put("/api/users/profile", { profileImage: imagePath });
+      await api.put("/api/users/profile", { profileImage: imagePath });
 
       setProfile((prev) => ({ ...prev, profileImage: imagePath }));
       alert("Profile image updated!");
@@ -95,7 +103,7 @@ function Profile() {
     if (!formId) return;
     setIsDeleting(true);
     try {
-      await axios.delete(`/api/forms/${formId}`, { withCredentials: true });
+      await api.delete(`/api/forms/${formId}`);
       setForms((prev) => prev.filter((f) => f._id !== formId));
       alert("Form deleted successfully!");
       setDeleteModal({ isOpen: false, form: null });
@@ -157,7 +165,7 @@ function Profile() {
                 profile?.profileImage
                 ? profile.profileImage.startsWith("http")
                 ? profile.profileImage
-                : `https://formbuilder-backend-j8sk.onrender.com${profile.profileImage}`
+                : `${BACKEND_URL}${profile.profileImage}`
                 : "https://t3.ftcdn.net/jpg/06/19/26/46/360_F_619264680_x2PBdGLF54sFe7kTBtAvZnPyXgvaRw0Y.jpg"
               }
               alt="Profile"

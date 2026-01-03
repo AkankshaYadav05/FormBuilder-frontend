@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Upload } from 'lucide-react';
-import axios from 'axios';
+import api from "../../utils/axios.js";
+import {BACKEND_URL} from "../../utils/constants.js";
 
 function FileUpload({ question, onChange }) {
   const fileInputRef = useRef(null);
@@ -27,7 +28,7 @@ function FileUpload({ question, onChange }) {
         const formData = new FormData();
         formData.append('file', file);
 
-        const res = await axios.post('https://formbuilder-backend-j8sk.onrender.com/api/upload', formData, {
+        const res = await api.post('/api/upload', formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
 
@@ -81,7 +82,7 @@ function FileUpload({ question, onChange }) {
         <ul className="mt-3 sm:mt-4 list-disc list-inside text-sm sm:text-base text-gray-700">
           {question.files.map((file, idx) => (
             <li key={idx}>
-              <a href={`https://formbuilder-backend-j8sk.onrender.com${file}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              <a href={`${BACKEND_URL}${file}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                 {file.split('/').pop()}
               </a>
             </li>

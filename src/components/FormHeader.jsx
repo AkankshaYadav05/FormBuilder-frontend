@@ -76,7 +76,7 @@ export default function FormHeader({ activeTab, setActiveTab, onSave, loading, i
             className="flex items-center gap-2 px-4 py-2 text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition"
           >
             <List size={18} />
-            My Forms
+            All Forms
           </button>
         </div>
 
@@ -153,7 +153,7 @@ export default function FormHeader({ activeTab, setActiveTab, onSave, loading, i
               className="w-full flex items-center justify-center gap-2 px-4 py-3 text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition"
             >
               <List size={18} />
-              My Forms
+              All Forms
             </button>
           </div>
         </div>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from "../utils/axios.js";
+import { BACKEND_URL } from "../utils/constants";
+
 import {
   ArrowLeft,
   Plus,
@@ -25,8 +27,7 @@ function FormsList() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [profile, setProfile] = useState(null);
 
-  axios.defaults.baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-  axios.defaults.withCredentials = true;
+
 
   useEffect(() => {
     loadForms();
@@ -35,7 +36,7 @@ function FormsList() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await axios.get("/api/users/profile");
+        const res = await api.get("/api/users/profile");
         setProfile(res.data);
       } catch (err) {
         console.error("Failed to load profile", err);
@@ -47,7 +48,7 @@ function FormsList() {
   const loadForms = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/forms');
+      const response = await api.get('/api/forms');
       setForms(Array.isArray(response.data) ? response.data : []);   
     } catch (error) {
       console.error('Error loading forms:', error);
@@ -63,8 +64,8 @@ function FormsList() {
     console.log("Deleting form:", formId); 
     setIsDeleting(true);
     try {
-      console.log("Base URL in delete:", axios.defaults.baseURL);
-      await axios.delete(`/api/forms/${formId}`, { withCredentials: true });
+      console.log("Base URL in delete:", `${BACKEND_URL}`);
+      await api.delete(`/api/forms/${formId}`, { withCredentials: true });
       setForms(forms.filter((form) => form._id !== formId));
       setMessage({ type: 'success', text: 'Form deleted successfully!' });
       setTimeout(() => setMessage(null), 3000);
@@ -132,7 +133,7 @@ function FormsList() {
                     profile?.profileImage
                     ? profile.profileImage.startsWith("http")
                     ? profile.profileImage
-                    : `https://formbuilder-backend-j8sk.onrender.com${profile.profileImage}`
+                    : `${BACKEND_URL}${profile.profileImage}`
                     : "https://t3.ftcdn.net/jpg/06/19/26/46/360_F_619264680_x2PBdGLF54sFe7kTBtAvZnPyXgvaRw0Y.jpg"
                   }               
                   alt="Profile"
@@ -172,7 +173,7 @@ function FormsList() {
                     profile?.profileImage
                     ? profile.profileImage.startsWith("http")
                     ? profile.profileImage
-                    : `https://formbuilder-backend-j8sk.onrender.com${profile.profileImage}`
+                    : `${BACKEND_URL}${profile.profileImage}`
                     : "https://t3.ftcdn.net/jpg/06/19/26/46/360_F_619264680_x2PBdGLF54sFe7kTBtAvZnPyXgvaRw0Y.jpg"
                   }
                   alt="Profile"

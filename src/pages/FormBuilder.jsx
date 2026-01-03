@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
 import { PlusCircle, List, Trash2, ArrowUp, ArrowDown } from "lucide-react";
+import api from "../utils/axios";
 
 import MCQ from "../components/questions/MCQ";
 import LongAnswer from "../components/questions/LongAnswer";
@@ -156,7 +156,7 @@ export default function FormBuilder() {
 
   const loadFormForEditing = async (formId) => {
     try {
-      const response = await axios.get(`https://formbuilder-backend-j8sk.onrender.com/api/forms/${formId}`);
+      const response = await api.get(`/api/forms/${formId}`);
       const form = response.data;
       setTitle(form.title);
       setDescription(form.description);
@@ -219,10 +219,10 @@ export default function FormBuilder() {
       };
 
       if (isEditing && currentFormId) {
-        await axios.put(`https://formbuilder-backend-j8sk.onrender.com/api/forms/${currentFormId}`, formData);
+        await api.put(`/api/forms/${currentFormId}`, formData);
         setMessage({ type: 'success', text: 'Form updated successfully!' });
       } else {
-        await axios.post("https://formbuilder-backend-j8sk.onrender.com/api/forms", formData);
+        await api.post("/api/forms", formData);
         setMessage({ type: 'success', text: 'Form saved successfully!' });
       }
 

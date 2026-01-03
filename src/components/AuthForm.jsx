@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Eye, EyeOff, Mail, Lock, User, Loader2 } from "lucide-react";
+import api from "../utils/axios.js";
 
 axios.defaults.withCredentials = true; 
 
@@ -22,8 +23,7 @@ export default function AuthForm({ type, onSuccess, onTypeChange }) {
 
     try {
       const endpoint = type === "login" ? "login" : "signup";
-      const { data } = await axios.post(
-        `https://formbuilder-backend-j8sk.onrender.com/api/users/${endpoint}`,
+      const { data } = await api.post(`/api/users/${endpoint}`,
         formData,
         { withCredentials: true }
       );

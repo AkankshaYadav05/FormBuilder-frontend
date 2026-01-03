@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/axios.js";
 
-axios.defaults.withCredentials = true;
+
 
 export const AuthContext = createContext();
 
@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   // Check server session on app load
   const checkAuth = async () => {
     try {
-      const res = await axios.get("https://formbuilder-backend-j8sk.onrender.com/api/users/me");
+      const res = await api.get("/api/users/me");
       if (res.data.loggedIn) setAuth(res.data.username);
       else setAuth(null);
     } catch {

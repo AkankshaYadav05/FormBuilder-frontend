@@ -274,11 +274,12 @@ function FileUpload({ question, answer, onChange }) {
       const formData = new FormData();
       formData.append('file', file);
 
-      const res = await api.post('/api/upload', formData, {
+      const res = await api.post('/api/upload/document', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      // res.data.filePath contains something like "/uploads/filename.ext"
+      // res.data.filePath contains Cloudinary URL or local path
+      // you can save/show that URL directly
       onChange(res.data.filePath);
     } catch (err) {
       console.error(err);

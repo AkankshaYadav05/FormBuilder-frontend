@@ -28,11 +28,11 @@ function FileUpload({ question, onChange }) {
         const formData = new FormData();
         formData.append('file', file);
 
-        const res = await api.post('/api/upload', formData, {
+        const res = await api.post('/api/upload/document', formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
 
-        uploadedFiles.push(res.data.filePath); // backend returns /uploads/filename
+        uploadedFiles.push(res.data.filePath); // backend now returns Cloudinary URL (or local path)
       }
 
       // Save uploaded file paths in question state

@@ -83,7 +83,7 @@ function Profile() {
 
     try {
       setImageUploading(true);
-      const res = await api.post("/api/upload", formData, {
+      const res = await api.post("/api/upload/image", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       const imagePath = res.data.filePath;
